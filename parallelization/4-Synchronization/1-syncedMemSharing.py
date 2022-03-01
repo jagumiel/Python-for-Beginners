@@ -1,22 +1,27 @@
-# Parallel version of letterCount.
-# Careful. This code is wrong for learning purposes. It is fast, but it does not counts well.
-# This is because threads are updating the global array without taking in count the work of the other threads. 
+# Parallel synced memory sharing example.
+# We use a lock to prevent the other thread to get a non-updated value.
+# After the value has been updated, we release the lock, so the other thread can work too.
 
 import time
-from threading import Thread
+from threading import Thread, Lock
 
 class StingySpendy:
     money=100
+    mutex=Lock()
 
     def stingy(self):
         for i in range(1000000):
+            self.mutex.acquire()
             self.money+=10
+            self.mutex.release()
         print("Spendy Done")
     
 
     def spendy(self):
         for i in range(1000000):
+            self.mutex.acquire()
             self.money-=10
+            self.mutex.release()
         print("Spendy Done")
 
 ss=StingySpendy()
